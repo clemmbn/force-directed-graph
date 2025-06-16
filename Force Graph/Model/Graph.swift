@@ -9,14 +9,13 @@ import Foundation
 
 @Observable
 final class GraphStore {
-    //Large graphs need constant-time access to a node; a dictionary keyed by UUID is cheap. Arrays alone would force O(n) scans.
-    var nodesByID: [UUID : Node] = [:]
+    var nodes: [Node] = []
     var edges: [Edge] = []
     var adjacency: [UUID: Set<UUID>] = [:]
     
     
     init(nodes: [Node], edges: [Edge]) {
-        self.nodesByID = Dictionary(uniqueKeysWithValues: nodes.map { ($0.id, $0) })
+        self.nodes = nodes
         self.edges = edges
         self.adjacency = edges.reduce(into: [:]) { result, edge in
             if result[edge.sourceID] == nil {
@@ -43,13 +42,14 @@ final class GraphStore {
     }
 }
 
+// A node represents a vertex of the graph (a dot)
 struct Node: Identifiable, Hashable {
     let id = UUID()
     var position: CGPoint
     var shape: NodeShape = .circle
-    var size: CGFloat = 50
 }
 
+// An edge links two nodes
 struct Edge: Identifiable, Hashable {
     let id = UUID()
     let sourceID: UUID
