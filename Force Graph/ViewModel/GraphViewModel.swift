@@ -28,7 +28,7 @@ final class GraphViewModel: ObservableObject {
   enum Constant {
     static let nodeSize = 20.0
     static let fontSize = 12.0
-    static let linkWidth = 2.0
+    static let edgeWidth = 2.0
   }
   
   // Graph store
@@ -70,9 +70,9 @@ final class GraphViewModel: ObservableObject {
   private(set) var viewToModel: CGAffineTransform = .identity
   private(set) var modelToView: CGAffineTransform = .identity
   
-  // Initializes the link width model
-  var linkWidthModel: Double {
-    Constant.linkWidth * viewToModel.a
+  // Initializes the edge width model
+  var edgeWidthModel: Double {
+    Constant.edgeWidth * viewToModel.a
   }
   
   // Creates a hit-testing rectangle for a node in model coordinates
@@ -109,15 +109,15 @@ final class GraphViewModel: ObservableObject {
     graph.nodes[index].isInteractive = false
   }
 
-  // Creates an array of link segments
-  // - Converts the link's source and target positions from model coordinates to view coordinates
+  // Creates an array of edge segments
+  // - Converts the edge's source and target positions from model coordinates to view coordinates
   // - Returns an array of tuples containing the source and target positions
-  func linkSegments() -> [(CGPoint, CGPoint)] {
+  func edgeSegments() -> [(CGPoint, CGPoint)] {
     let lookup = Dictionary(uniqueKeysWithValues:
                               graph.nodes.map { ($0.id, $0.position) })
-    return graph.links.compactMap { link in
-      guard let source = lookup[link.source],
-            let target = lookup[link.target] else {
+    return graph.edges.compactMap { edge in
+      guard let source = lookup[edge.sourceID],
+            let target = lookup[edge.targetID] else {
               return nil
             }
       return (source, target)
